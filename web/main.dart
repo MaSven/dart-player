@@ -15,45 +15,47 @@ UListElement audioFiles= querySelector("#files");
 
 void files(List<File> files){
 
-  final FileReader reader = new FileReader();
+
 
   for(File f in files){
+    final FileReader reader = new FileReader();
     reader.onLoad.listen((e){
       sendData(f.name,reader.result);
     });
     if(audio.currentPlay=="")audio.currentPlay=f.name;
-    Element bPlay = new ButtonElement();
-    bPlay.text="Play";
 
-    Element b = new ButtonElement();
-    b.text= "Löschen";
-
-    Element e = new LIElement();
-    e.text = f.name;
-    e.children.add(b);
-    e.children.add(bPlay);
-    b.onClick.listen((el){
-      final String id = f.name;
-      audio.audioFiles.remove(id);
-      if(audio.currentPlay==id){
-        stopAudio();
-      }
-      audioFiles.children.remove(e);
-    });
-    bPlay.onClick.listen((el){
-      audio.isPLay=false;
-      List<String> buffer = new List.from(audio.audioFiles.keys,growable: false);
-      int index = buffer.indexOf(audio.currentPlay);
-      removeCss(index);
-      audio.currentPlay=f.name;
-      playAudio();
-    });
-    audioFiles.children.add(e);
     reader.readAsDataUrl(f);
   }
 }
 
 void sendData(String name,String data){
+  Element bPlay = new ButtonElement();
+  bPlay.text="Play";
+
+  Element b = new ButtonElement();
+  b.text= "Löschen";
+
+  Element e = new LIElement();
+  e.text = name;
+  e.children.add(b);
+  e.children.add(bPlay);
+  b.onClick.listen((el){
+    final String id = name;
+    audio.audioFiles.remove(id);
+    if(audio.currentPlay==id){
+      stopAudio();
+    }
+    audioFiles.children.remove(e);
+  });
+  bPlay.onClick.listen((el){
+    audio.isPLay=false;
+    List<String> buffer = new List.from(audio.audioFiles.keys,growable: false);
+    int index = buffer.indexOf(audio.currentPlay);
+    removeCss(index);
+    audio.currentPlay=name;
+    playAudio();
+  });
+  audioFiles.children.add(e);
   audio.audioFiles.putIfAbsent(name,()=>data);
 }
 
